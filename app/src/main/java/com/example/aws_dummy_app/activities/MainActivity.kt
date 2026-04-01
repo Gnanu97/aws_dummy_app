@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread { Toast.makeText(this, msg, Toast.LENGTH_SHORT).show() }
         }
 
-        // â”€â”€ Door Access â”€â”€
+        // ── Door Access ──
         binding.btnGenerateQR.setOnClickListener {
             startActivity(Intent(this, GenerateQRActivity::class.java))
         }
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, QRValidatorActivity::class.java))
         }
 
-        // â”€â”€ Auth Info Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Auth Info Button ──────────────────────────────────────────────
         binding.btnAuthInfo.setOnClickListener {
             val stateJson = getSharedPreferences("auth", MODE_PRIVATE)
                 .getString("state", null)
@@ -81,7 +81,6 @@ class MainActivity : AppCompatActivity() {
             val accessToken = authState.accessToken ?: "null"
             val idToken     = authState.idToken ?: "null"
 
-            // Decode sub + email from id_token
             var sub   = "unknown"
             var email = "unknown"
             try {
@@ -101,36 +100,39 @@ class MainActivity : AppCompatActivity() {
             showAuthDialog(
                 title   = "Auth Info",
                 message = """
-                    âœ… Logged In: ${authState.isAuthorized}
+                    ✅ Logged In: ${authState.isAuthorized}
                     
-                    ðŸ‘¤ Sub (User ID):
+                    👤 Sub (User ID):
                     $sub
                     
-                    ðŸ“§ Email:
+                    📧 Email:
                     $email
                     
-                    ðŸ”‘ Access Token:
+                    🔑 Access Token:
                     ${accessToken.take(80)}...
                     
-                    ðŸªª ID Token:
+                    🪚 ID Token:
                     ${idToken.take(80)}...
                 """.trimIndent()
             )
         }
-        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-        // â”€â”€ BLE Provisioning â”€â”€
+        // ── Connect to Google Button ────────────────────────────────────────
+        binding.btnConnectGoogle.setOnClickListener {
+            startActivity(Intent(this, ConnectGmailActivity::class.java))
+        }
+        // ────────────────────────────────────────────────────────────────
+
+        // ── BLE Provisioning ──
         binding.btnScan.setOnClickListener { requestPermissionsAndScan() }
 
-        // â”€â”€ Logout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Logout ──────────────────────────────────────────────────────
         binding.btnLogout.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
                 .setPositiveButton("Logout") { _, _ ->
-                    // Clear auth state
                     TokenManager.clearSession(this)
-                    // Clear Room DB log
                     GlobalScope.launch(Dispatchers.IO) {
                         com.example.aws_dummy_app.db.AppDatabase
                             .getInstance(applicationContext)
@@ -144,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                 .setNegativeButton("Cancel", null)
                 .show()
         }
-        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ────────────────────────────────────────────────────────────────
     }
 
     private fun showAuthDialog(title: String, message: String) {
